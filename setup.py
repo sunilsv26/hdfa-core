@@ -9,9 +9,12 @@ setup(
     long_description=open("README.md", encoding="utf-8").read() if open("README.md") else "",
     long_description_content_type="text/markdown",
     packages=find_packages(),
+    
+    # FIXED: Replaced the forbidden license classifier string with the modern SPDX identifier field
+    license_expression="Apache-2.0",
+    
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software Foundation :: Apache License 2.0",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
@@ -22,7 +25,6 @@ setup(
         "beautifulsoup4>=4.11.0",
         "streamlit>=1.30.0",
     ],
-    # UPDATED PRIORITY 1 ENTRYPOINT: Routes the execution path through the hdfa_core module space
     entry_points={
         'console_scripts': [
             'hdfa-interactive=hdfa_core.cli:main_entry',
