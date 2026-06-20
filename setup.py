@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'hdfa-interactive=hdfa_core.cli:main_entry',
+            'hdfa-bridge=hdfa_core.plugin_bridge:main_bridge_entry',
         ],
     },
 )
