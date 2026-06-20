@@ -1,12 +1,12 @@
 import torch
 import time
 import os
-from .core_math import HDC_VectorEngine
-from .sliding_encoder import HDFA_SlidingEncoder
-from .repo_harvester import HDFA_ProjectHarvester
-from .fluid_grid import HDFA_FluidGrid
-from .lookup_engine import HDFA_LookupEngine
-from .save_state import HDFA_MemorySaver
+from hdfa_core.core_math import HDC_VectorEngine
+from hdfa_core.sliding_encoder import HDFA_SlidingEncoder
+from hdfa_core.repo_harvester import HDFA_ProjectHarvester
+from hdfa_core.fluid_grid import HDFA_FluidGrid
+from hdfa_core.lookup_engine import HDFA_LookupEngine
+from hdfa_core.save_state import HDFA_MemorySaver
 
 
 class HDFA_RepoTrainer:

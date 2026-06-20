@@ -1,7 +1,7 @@
 import time
 import os
 import torch
-from main import HDFA_FullPipeline
+from hdfa_core.main import HDFA_FullPipeline
 
 def run_invention_benchmarks():
     print("=================== DAY 7: SYSTEM BENCHMARKING ===================")

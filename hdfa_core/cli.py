@@ -1,8 +1,8 @@
 import sys
 import torch
-from .core_math import HDC_VectorEngine
-from .sliding_encoder import HDFA_SlidingEncoder
-from .predictor import HDFA_CharacterPredictor
+from hdfa_core.core_math import HDC_VectorEngine
+from hdfa_core.sliding_encoder import HDFA_SlidingEncoder
+from hdfa_core.predictor import HDFA_CharacterPredictor
 
 
 

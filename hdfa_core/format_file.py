@@ -1,8 +1,8 @@
 import os
 import torch
 from hdfa_core.core_math import HDC_VectorEngine
-from sliding_encoder import HDFA_SlidingEncoder
-from cli import HDFA_IntegratedCLI
+from hdfa_core.sliding_encoder import HDFA_SlidingEncoder
+from hdfa_core.cli import HDFA_IntegratedCLI
 
 class HDFA_FileFormatter:
     def __init__(self, integrated_app):

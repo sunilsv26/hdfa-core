@@ -1,9 +1,9 @@
 import asyncio
 from hdfa_core.core_math import HDC_VectorEngine
-from doc_spider import HDFA_DocSpider
-from vector_binder import HDC_SymbolicBinder
-from fluid_grid import HDFA_FluidGrid
-from lookup_engine import HDFA_LookupEngine
+from hdfa_core.doc_spider import HDFA_DocSpider
+from hdfa_core.vector_binder import HDC_SymbolicBinder
+from hdfa_core.fluid_grid import HDFA_FluidGrid
+from hdfa_core.lookup_engine import HDFA_LookupEngine
 
 class HDFA_FullPipeline:
     def __init__(self):
