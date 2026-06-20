@@ -1,12 +1,15 @@
 import torch
 import time
 import os
-from hdfa_core.core_math import HDC_VectorEngine
-from hdfa_core.sliding_encoder import HDFA_SlidingEncoder
-from hdfa_core.repo_harvester import HDFA_ProjectHarvester
-from hdfa_core.fluid_grid import HDFA_FluidGrid
-from hdfa_core.lookup_engine import HDFA_LookupEngine
-from hdfa_core.save_state import HDFA_MemorySaver
+import sys
+
+# Fixed to use package-relative imports for global distribution stability
+from .core_math import HDC_VectorEngine
+from .sliding_encoder import HDFA_SlidingEncoder
+from .repo_harvester import HDFA_ProjectHarvester
+from .fluid_grid import HDFA_FluidGrid
+from .lookup_engine import HDFA_LookupEngine
+from .save_state import HDFA_MemorySaver
 
 
 class HDFA_RepoTrainer:
@@ -61,7 +64,23 @@ class HDFA_RepoTrainer:
         print("================================================================")
         print("\n[SUCCESS] Local project training architecture validated completely.")
 
-if __name__ == "__main__":
+
+# Global entry point function mapped directly to your setup.py terminal scripts console hooks
+def main_entry():
+    # If the user supplies an argument path in the terminal, capture it. Otherwise fallback to current dir.
+    target_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
+    
+    # Clean up backslashes and relative paths from the console prompt
+    target_dir = os.path.abspath(target_dir)
+    
+    if not os.path.exists(target_dir):
+        print(f"[ERROR] Specified training directory trajectory path hidden or missing: {target_dir}")
+        sys.exit(1)
+        
+    print(f"[SYSTEM] Initializing macro training ingestion track on path: {target_dir}")
     trainer = HDFA_RepoTrainer()
-    target_project_dir = os.path.dirname(os.path.abspath(__file__))
-    trainer.execute_one_shot_training(target_project_dir)
+    trainer.execute_one_shot_training(target_dir)
+
+
+if __name__ == "__main__":
+    main_entry()

@@ -28,20 +28,23 @@ class HDFA_IDEBridgeServer:
         """
         print(f"[BRIDGE] Active editor socket connection established via: {websocket.remote_address}")
         
-        # Local shortcuts to maximize CPU cache execution speeds
         encoder = self.app.encoder
         predictor = self.app.predictor
         
         async for message in websocket:
             try:
-                # Parse live typing data received from the text editor extension
                 data = json.loads(message)
+                
+                # FIXED: Aligned the key string handle to look for 'code_line' from extension.js
                 user_code_line = data.get("code_line", "").strip()
                 
                 if not user_code_line:
                     continue
+                
+                # Print confirmation log so you can see your live keystrokes hitting the Python core!
+                print(f"[STREAM] Ingesting typing slice: '{user_code_line}'")
                     
-                # 1. Project editor string into sequential character n-grams [Length, 10000]
+                # 1. Project editor string into sequential character n-grams
                 query_waves = encoder.encode_file_stream(user_code_line)
                 
                 # 2. Compute timeline sequence trace matching for whole-line auto-repair
@@ -54,8 +57,8 @@ class HDFA_IDEBridgeServer:
                 else:
                     next_char, char_resonance = " ", 0.0
 
-                # Wipe noise if match metrics sit below baseline geometric alignment gates
-                if line_score < 4000.0:
+                # Balanced alignment gate: lower to 3500.0 to catch partial lines easily
+                if line_score < 3500.0:
                     matched_line = "No Confident Match Found"
                     next_char, char_resonance = " ", 0.0
 
@@ -71,7 +74,7 @@ class HDFA_IDEBridgeServer:
                 await websocket.send(json.dumps(response_payload))
                 
             except Exception as e:
-                # Catch closed socket cycles safely
+                print(f"[BRIDGE EXCEPTION] {str(e)}")
                 break
                 
         print(f"[BRIDGE] Editor socket session disconnected: {websocket.remote_address}")
@@ -82,7 +85,7 @@ class HDFA_IDEBridgeServer:
         async with websockets.serve(self.handle_editor_stream, self.host, self.port):
             print(f"\n[SUCCESS] HDFA Plugin Bridge running at ws://{self.host}:{self.port}")
             print("Listening for live editor connection threads... Press Ctrl+C to close.")
-            await asyncio.Future() # Keep loop running continuously in background
+            await asyncio.Future()
 
 def main_bridge_entry():
     server = HDFA_IDEBridgeServer()
