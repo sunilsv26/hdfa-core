@@ -1,6 +1,7 @@
 import streamlit as st
 import torch
 import os
+from pathlib import Path
 from hdfa_core.core_math import HDC_VectorEngine
 from hdfa_core.sliding_encoder import HDFA_SlidingEncoder
 from hdfa_core.predictor import HDFA_CharacterPredictor
@@ -30,13 +31,38 @@ saver = HDFA_MemorySaver(engine)
 # 3. Create Sidebar Control and Reference Deck panels
 st.sidebar.header("📁 System Knowledge Base Index")
 
-# Long-Term Storage Controller
-if os.path.exists("codebase_brain.pt"):
-    if st.sidebar.button("🔌 Rehydrate 'codebase_brain.pt' (1.01 MB)", type="primary"):
-        with st.sidebar.spinner("Pumping matrix states to CPU cache..."):
-            success = saver.load_brain_snapshot("codebase_brain.pt")
+# Long-Term Storage Controller — resolve brain file relative to project root
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+# Candidate locations to look for the serialized brain file
+candidate_paths = [
+    PROJECT_ROOT / "codebase_brain.pt",
+    Path(__file__).resolve().parent / "codebase_brain.pt",
+]
+
+# Pick the first existing candidate path
+found_path = None
+for p in candidate_paths:
+    if p.exists():
+        found_path = p
+        break
+
+if found_path:
+    # Auto-load the brain file once per session to avoid requiring manual button clicks
+    if "brain_loaded" not in st.session_state:
+        with st.sidebar.spinner("Auto-loading brain snapshot from disk..."):
+            success = saver.load_brain_snapshot(str(found_path))
             if success:
-                # Re-compile the template tracking vectors using the newly rehydrated vector space
+                for template in app.templates:
+                    app.template_vectors[template] = encoder.encode_file_stream(template)
+                st.sidebar.success("Brain & Templates Synchronized Natively!")
+            else:
+                st.sidebar.warning("Failed to load brain snapshot automatically; try the Rehydrate button.")
+        st.session_state.brain_loaded = True
+
+    if st.sidebar.button(f"🔌 Rehydrate '{found_path.name}' ({found_path.stat().st_size/1024:.2f} KB)", type="primary"):
+        with st.sidebar.spinner("Pumping matrix states to CPU cache..."):
+            success = saver.load_brain_snapshot(str(found_path))
+            if success:
                 for template in app.templates:
                     app.template_vectors[template] = encoder.encode_file_stream(template)
                 st.sidebar.success("Brain & Templates Synchronized Natively!")
