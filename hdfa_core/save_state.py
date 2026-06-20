@@ -53,7 +53,7 @@ class HDFA_MemorySaver:
 if __name__ == "__main__":
     print("Initializing Phase 3: Persistent Long-Term Memory Core...")
     # FIXED: Replaced the absolute package name path with a direct local file import
-    from core_math import HDC_VectorEngine
+    from hdfa_core.core_math import HDC_VectorEngine
     
     # 1. Spin up a temporary brain engine and teach it a rule
     engine_a = HDC_VectorEngine()

@@ -1,6 +1,6 @@
 import os
 import torch
-from core_math import HDC_VectorEngine
+from hdfa_core.core_math import HDC_VectorEngine
 from sliding_encoder import HDFA_SlidingEncoder
 from cli import HDFA_IntegratedCLI
 

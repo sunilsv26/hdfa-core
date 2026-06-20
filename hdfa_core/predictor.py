@@ -1,6 +1,7 @@
 import torch
-from core_math import HDC_VectorEngine
-from sliding_encoder import HDFA_SlidingEncoder
+from .core_math import HDC_VectorEngine
+from .sliding_encoder import HDFA_SlidingEncoder
+
 
 class HDFA_CharacterPredictor:
     def __init__(self, vector_engine, sliding_encoder):

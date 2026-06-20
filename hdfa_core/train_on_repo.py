@@ -1,12 +1,13 @@
 import torch
 import time
 import os
-from core_math import HDC_VectorEngine
-from sliding_encoder import HDFA_SlidingEncoder
-from repo_harvester import HDFA_ProjectHarvester
-from fluid_grid import HDFA_FluidGrid
-from lookup_engine import HDFA_LookupEngine
-from save_state import HDFA_MemorySaver  # Added the Phase 3 module
+from .core_math import HDC_VectorEngine
+from .sliding_encoder import HDFA_SlidingEncoder
+from .repo_harvester import HDFA_ProjectHarvester
+from .fluid_grid import HDFA_FluidGrid
+from .lookup_engine import HDFA_LookupEngine
+from .save_state import HDFA_MemorySaver
+
 
 class HDFA_RepoTrainer:
     def __init__(self):

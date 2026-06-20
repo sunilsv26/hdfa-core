@@ -32,7 +32,7 @@ class HDFA_LookupEngine:
 # --- DAY 5 VALIDATION TEST ---
 if __name__ == "__main__":
     print("Initializing Day 5: Cleanroom Dot-Product Lookup Engine...")
-    from core_math import HDC_VectorEngine
+    from hdfa_core.core_math import HDC_VectorEngine
     
     # 1. Spin up the Day 1 vector core
     engine = HDC_VectorEngine()

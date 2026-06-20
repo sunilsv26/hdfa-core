@@ -1,5 +1,5 @@
 import asyncio
-from core_math import HDC_VectorEngine
+from hdfa_core.core_math import HDC_VectorEngine
 from doc_spider import HDFA_DocSpider
 from vector_binder import HDC_SymbolicBinder
 from fluid_grid import HDFA_FluidGrid

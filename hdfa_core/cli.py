@@ -1,8 +1,10 @@
 import sys
 import torch
-from core_math import HDC_VectorEngine
-from sliding_encoder import HDFA_SlidingEncoder
-from predictor import HDFA_CharacterPredictor
+from .core_math import HDC_VectorEngine
+from .sliding_encoder import HDFA_SlidingEncoder
+from .predictor import HDFA_CharacterPredictor
+
+
 
 class HDFA_IntegratedCLI:
     def __init__(self):
@@ -89,3 +91,11 @@ class HDFA_IntegratedCLI:
 if __name__ == "__main__":
     app = HDFA_IntegratedCLI()
     app.run_repl_loop()
+
+# Add this function at the very bottom of your cli.py file to handle the console script trigger
+def main_entry():
+    cli_app = HDFA_IntegratedCLI()
+    cli_app.run_repl_loop()
+
+if __name__ == "__main__":
+    main_entry()

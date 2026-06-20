@@ -1,5 +1,5 @@
 import torch
-from core_math import HDC_VectorEngine
+from hdfa_core.core_math import HDC_VectorEngine
 
 class HDFA_SlidingEncoder:
     def __init__(self, vector_engine, window_size=3):

@@ -1,7 +1,7 @@
 import streamlit as st
 import torch
 import os
-from core_math import HDC_VectorEngine
+from hdfa_core.core_math import HDC_VectorEngine
 from sliding_encoder import HDFA_SlidingEncoder
 from predictor import HDFA_CharacterPredictor
 from cli import HDFA_IntegratedCLI

@@ -44,7 +44,7 @@ class HDFA_FluidGrid:
 # --- DAY 4 VALIDATION TEST ---
 if __name__ == "__main__":
     print("Initializing Day 4: Fluid Automaton Spatial Grid Core...")
-    from core_math import HDC_VectorEngine
+    from hdfa_core.core_math import HDC_VectorEngine
     
     engine = HDC_VectorEngine()
     fluid_core = HDFA_FluidGrid()
