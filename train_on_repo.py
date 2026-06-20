@@ -1,10 +1,12 @@
 import torch
 import time
+import os
 from core_math import HDC_VectorEngine
 from sliding_encoder import HDFA_SlidingEncoder
 from repo_harvester import HDFA_ProjectHarvester
 from fluid_grid import HDFA_FluidGrid
 from lookup_engine import HDFA_LookupEngine
+from save_state import HDFA_MemorySaver  # Added the Phase 3 module
 
 class HDFA_RepoTrainer:
     def __init__(self):
@@ -13,6 +15,7 @@ class HDFA_RepoTrainer:
         self.encoder = HDFA_SlidingEncoder(self.engine, window_size=3)
         self.grid = HDFA_FluidGrid()
         self.lookup = HDFA_LookupEngine(self.engine)
+        self.saver = HDFA_MemorySaver(self.engine)  # Initialised memory saver
 
     def execute_one_shot_training(self, workspace_path):
         # 1. Harvest and Encode Workspace Code Streams
@@ -23,15 +26,13 @@ class HDFA_RepoTrainer:
             print("[ERROR] No code assets discovered for sequence streaming.")
             return
 
-        print(f"\n[STEP 1] Streaming {master_tensor_pool.shape[0]} structural n-grams through Fluid Automaton Grid...")
+        print(f"\n[STEP 1] Streaming {master_tensor_pool.shape} structural n-grams through Fluid Automaton Grid...")
         
         start_time = time.perf_counter()
         
         # 2. Local Cellular Neighborhood Propagation Loop
-        # We push each character wave vector sequentially to ripple the 2D grid matrix
         for index in range(master_tensor_pool.shape[0]):
             incoming_char_wave = master_tensor_pool[index]
-            # Update the fluid grid using fast local consensus cell transitions
             self.grid.step_local_automaton(incoming_char_wave)
             
         duration = time.perf_counter() - start_time
@@ -39,13 +40,15 @@ class HDFA_RepoTrainer:
         print(f"Average absorption velocity: {(master_tensor_pool.shape[0]/duration):.2f} tokens per second.")
 
         # 3. Cache the Learned Spatial State as a Target Lookup Frame
-        # We lock the final grid snapshot into our codebook as a unique structural signature
-        learned_state_signature = self.grid.grid.flatten()
+        learned_state_signature = self.grid.step_local_automaton(torch.zeros(10000))
         self.engine.codebook["hdfa-core-architecture-blueprint"] = learned_state_signature
         
-        # 4. Run an Instant Verification Check
-        print("\n[STEP 2] Running Verification Test on Ingested Architecture Context...")
-        # Simulate a partial or slightly noisy match wave to trace retrieval resonance
+        # 4. NEW: Automatically serialize the compiled brain state permanently to your drive
+        print("\n[STEP 2] Committing learned workspace matrices to long-term storage...")
+        self.saver.save_brain_snapshot("codebase_brain.pt")
+        
+        # 5. Run an Instant Verification Check
+        print("\n[STEP 3] Running Verification Test on Ingested Architecture Context...")
         corrupted_state = torch.sign(learned_state_signature + (torch.randn(10000) * 0.2))
         corrupted_state[corrupted_state == 0] = -1.0
         
@@ -58,9 +61,6 @@ class HDFA_RepoTrainer:
         print("\n[SUCCESS] Local project training architecture validated completely.")
 
 if __name__ == "__main__":
-    import os
     trainer = HDFA_RepoTrainer()
-    
-    # Ingest the active hdfa-core directory to train the model on its own code!
     target_project_dir = os.path.dirname(os.path.abspath(__file__))
     trainer.execute_one_shot_training(target_project_dir)
