@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/1274537993.svg)](https://doi.org/10.5281/zenodo.20769001)
 Copyright 2026 [Sunil Sherikar]
 
 Licensed under the Apache License, Version 2.0 (the "License");
