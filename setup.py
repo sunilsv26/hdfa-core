@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="hdfa-core",
-    version="1.0.0",
+    version="1.2.0",
     author="Sunil Sherikar",
     author_email="sunilsv26@gmail.com",
     description="A non-gradient, cache-native Hyper-Dimensional Fluid Automaton AI core for ultra-low-energy code synthesis.",
