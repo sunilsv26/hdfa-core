@@ -3,7 +3,6 @@ import time
 import os
 import sys
 
-# Fixed to use package-relative imports for global distribution stability
 from .core_math import HDC_VectorEngine
 from .sliding_encoder import HDFA_SlidingEncoder
 from .repo_harvester import HDFA_ProjectHarvester
@@ -19,11 +18,11 @@ class HDFA_RepoTrainer:
         self.encoder = HDFA_SlidingEncoder(self.engine, window_size=3)
         self.grid = HDFA_FluidGrid()
         self.lookup = HDFA_LookupEngine(self.engine)
-        self.saver = HDFA_MemorySaver(self.engine)  # Initialised memory saver
+        self.saver = HDFA_MemorySaver(self.engine)
 
     def execute_one_shot_training(self, workspace_path):
         # 1. Harvest and Encode Workspace Code Streams
-        harvester = HDFA_ProjectHarvester(workspace_path, file_extensions=['.py'])
+        harvester = HDFA_ProjectHarvester(workspace_path)
         master_tensor_pool = harvester.harvest_and_stream_workspace(self.engine, self.encoder)
         
         if master_tensor_pool.shape[0] == 0:
@@ -47,11 +46,12 @@ class HDFA_RepoTrainer:
         learned_state_signature = self.grid.step_local_automaton(torch.zeros(10000))
         self.engine.codebook["hdfa-core-architecture-blueprint"] = learned_state_signature
         
-        # 4. NEW: Automatically serialize the compiled brain state permanently to your drive
-        print("\n[STEP 2] Committing learned workspace matrices to long-term storage...")
-        self.saver.save_brain_snapshot("codebase_brain.pt")
+        # Enforce absolute destination paths straight inside the crawled workspace folder
+        destination_brain_path = os.path.normpath(os.path.join(workspace_path, "codebase_brain.pt"))
+        print(f"\n[STEP 2] Committing learned workspace matrices to long-term storage...")
+        self.saver.save_brain_snapshot(destination_brain_path)
         
-        # 5. Run an Instant Verification Check
+        # 4. Run an Instant Verification Check
         print("\n[STEP 3] Running Verification Test on Ingested Architecture Context...")
         corrupted_state = torch.sign(learned_state_signature + (torch.randn(10000) * 0.2))
         corrupted_state[corrupted_state == 0] = -1.0
@@ -65,17 +65,17 @@ class HDFA_RepoTrainer:
         print("\n[SUCCESS] Local project training architecture validated completely.")
 
 
-# Global entry point function mapped directly to your setup.py terminal scripts console hooks
+# FIXED: Explicitly defined main_entry to eliminate global console execution route exceptions
 def main_entry():
-    # If the user supplies an argument path in the terminal, capture it. Otherwise fallback to current dir.
-    target_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
-    
-    # Clean up backslashes and relative paths from the console prompt
-    target_dir = os.path.abspath(target_dir)
-    
-    if not os.path.exists(target_dir):
-        print(f"[ERROR] Specified training directory trajectory path hidden or missing: {target_dir}")
-        sys.exit(1)
+    # If the user provides an argument that isn't empty, pull its path. Otherwise, use active folder.
+    if len(sys.argv) > 1:
+        first_argument = sys.argv[1].strip()
+        if first_argument in [".", "./", ""]:
+            target_dir = os.getcwd()
+        else:
+            target_dir = os.path.abspath(first_argument)
+    else:
+        target_dir = os.getcwd()
         
     print(f"[SYSTEM] Initializing macro training ingestion track on path: {target_dir}")
     trainer = HDFA_RepoTrainer()
