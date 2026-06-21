@@ -9,7 +9,7 @@ from hdfa_core.predictor import HDFA_CharacterPredictor
 class HDFA_IntegratedCLI:
     def __init__(self):
         print("================================================================")
-        print("🧠 HDFA INTEGRATED CORE: AUTO-REPAIR & PREDICTIVE INTERFACE")
+        print("HDFA INTEGRATED CORE: AUTO-REPAIR & PREDICTIVE INTERFACE")
         print("================================================================")
         self.engine = HDC_VectorEngine()
         self.encoder = HDFA_SlidingEncoder(self.engine, window_size=3)

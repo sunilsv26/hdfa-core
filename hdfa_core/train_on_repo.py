@@ -7,80 +7,75 @@ from .core_math import HDC_VectorEngine
 from .sliding_encoder import HDFA_SlidingEncoder
 from .repo_harvester import HDFA_ProjectHarvester
 from .fluid_grid import HDFA_FluidGrid
-from .lookup_engine import HDFA_LookupEngine
 from .save_state import HDFA_MemorySaver
-
 
 class HDFA_RepoTrainer:
     def __init__(self):
-        print("[PIPELINE] Initializing Local Repository Training Architecture...")
+        print("[PIPELINE] Initializing High-Resolution Training Architecture...")
         self.engine = HDC_VectorEngine()
         self.encoder = HDFA_SlidingEncoder(self.engine, window_size=3)
         self.grid = HDFA_FluidGrid()
-        self.lookup = HDFA_LookupEngine(self.engine)
         self.saver = HDFA_MemorySaver(self.engine)
 
     def execute_one_shot_training(self, workspace_path):
-        # 1. Harvest and Encode Workspace Code Streams
-        harvester = HDFA_ProjectHarvester(workspace_path)
-        master_tensor_pool = harvester.harvest_and_stream_workspace(self.engine, self.encoder)
+        print(f"[HARVESTER] Initiating high-resolution line extraction on: {workspace_path}")
         
-        if master_tensor_pool.shape[0] == 0:
-            print("[ERROR] No code assets discovered for sequence streaming.")
+        # We will harvest code files and break them down into discrete lines
+        extensions = ['.py', '.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.json']
+        learned_lines_cache = {}
+        processed_files_count = 0
+
+        for root, dirs, files in os.walk(workspace_path):
+            ignored = ['node_modules', '.git', '__pycache__', '.pytest_cache', 'dist', 'build', '.next', 'out']
+            dirs[:] = [d for d in dirs if d not in ignored]
+
+            for file in files:
+                if file in ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'package.json']:
+                    continue
+                if any(file.endswith(ext) for ext in extensions):
+                    file_path = os.path.join(root, file)
+                    try:
+                        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                            for line in f:
+                                clean_line = line.strip()
+                                # Only memorize meaningful lines of code
+                                if len(clean_line) > 10 and not clean_line.startswith(('import', 'from', '*', '//')):
+                                    # Project line into a highly unique hyperdimensional vector shape
+                                    line_waves = self.encoder.encode_file_stream(clean_line)
+                                    if line_waves is not None and line_waves.shape[0] > 0:
+                                        line_vector = torch.sign(torch.sum(line_waves, dim=0))
+                                        line_vector[line_vector == 0] = -1.0
+                                        
+                                        # Cache the raw line text tied directly to its mathematical identifier
+                                        learned_lines_cache[clean_line] = line_vector
+                        processed_files_count += 1
+                        print(f"[LEARNED] Extracted high-res lines from: {file}")
+                    except Exception:
+                        continue
+
+        if len(learned_lines_cache) == 0:
+            print("[ERROR] No unique code sequences discovered.")
             return
 
-        print(f"\n[STEP 1] Streaming {master_tensor_pool.shape} structural n-grams through Fluid Automaton Grid...")
-        
-        start_time = time.perf_counter()
-        
-        # 2. Local Cellular Neighborhood Propagation Loop
-        for index in range(master_tensor_pool.shape[0]):
-            incoming_char_wave = master_tensor_pool[index]
-            self.grid.step_local_automaton(incoming_char_wave)
-            
-        duration = time.perf_counter() - start_time
-        print(f"[SUCCESS] Grid processing finalized in {duration:.4f} seconds.")
-        print(f"Average absorption velocity: {(master_tensor_pool.shape[0]/duration):.2f} tokens per second.")
+        print(f"\n[SUCCESS] Extracted {len(learned_lines_cache)} high-resolution code structures!")
 
-        # 3. Cache the Learned Spatial State as a Target Lookup Frame
-        learned_state_signature = self.grid.step_local_automaton(torch.zeros(10000))
-        self.engine.codebook["hdfa-core-architecture-blueprint"] = learned_state_signature
+        # Inject the entire learned dictionary directly into the engine's active codebook memory
+        self.engine.codebook = {**self.engine.codebook, **learned_lines_cache}
         
-        # Enforce absolute destination paths straight inside the crawled workspace folder
         destination_brain_path = os.path.normpath(os.path.join(workspace_path, "codebase_brain.pt"))
-        print(f"\n[STEP 2] Committing learned workspace matrices to long-term storage...")
+        print(f"\n[STEP 2] Committing high-res knowledge base to drive...")
         self.saver.save_brain_snapshot(destination_brain_path)
-        
-        # 4. Run an Instant Verification Check
-        print("\n[STEP 3] Running Verification Test on Ingested Architecture Context...")
-        corrupted_state = torch.sign(learned_state_signature + (torch.randn(10000) * 0.2))
-        corrupted_state[corrupted_state == 0] = -1.0
-        
-        best_match, resonance = self.lookup.query_nearest_syntax(corrupted_state)
-        
-        print("\n================== WORKSPACE TRAINING RESULTS ==================")
-        print(f"Identified Concept Target: '{best_match}'")
-        print(f"Geometric Similarity Resonance: {resonance} / {self.engine.dimension}")
-        print("================================================================")
-        print("\n[SUCCESS] Local project training architecture validated completely.")
+        print(f"[SUCCESS] High-resolution brain snapshot sealed at: {destination_brain_path}")
 
-
-# FIXED: Explicitly defined main_entry to eliminate global console execution route exceptions
 def main_entry():
-    # If the user provides an argument that isn't empty, pull its path. Otherwise, use active folder.
-    if len(sys.argv) > 1:
-        first_argument = sys.argv[1].strip()
-        if first_argument in [".", "./", ""]:
-            target_dir = os.getcwd()
-        else:
-            target_dir = os.path.abspath(first_argument)
+    if len(sys.argv) > 1 and sys.argv[1].strip() not in [".", "./", ""]:
+        target_dir = os.path.abspath(sys.argv[1].strip())
     else:
         target_dir = os.getcwd()
         
-    print(f"[SYSTEM] Initializing macro training ingestion track on path: {target_dir}")
+    print(f"[SYSTEM] Initializing high-resolution trainer on: {target_dir}")
     trainer = HDFA_RepoTrainer()
     trainer.execute_one_shot_training(target_dir)
-
 
 if __name__ == "__main__":
     main_entry()
